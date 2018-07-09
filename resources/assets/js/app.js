@@ -14,3 +14,10 @@ require('./bootstrap');
  */
 
 import ReactApp from './components/ReactApp';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+// Initialize the root of the react application
+if (document.getElementById('root')) {
+    ReactDOM.render(<ReactApp />, document.getElementById('root'));
+}
