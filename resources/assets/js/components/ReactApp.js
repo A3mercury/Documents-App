@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import DocumentsList from './DocumentsList';
-import NewDocument from './NewDocument';
 
 export default class ReactApp extends Component {
     constructor() {
