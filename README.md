@@ -66,3 +66,11 @@ npm run dev
 Now you can go to your url `http://doc-app.developer` and the app should be good to go! :)
 
 ### What to look for
+What I've created is an application on a single page that both lists all the documents the user has uploaded as well as form section that allows more documents to be uploaded. The table should show a preview of the image if it is of types `jpeg`, `png`, or `gif` and a link to view or download the document of other types. The table also lists the document's name, type, upload date, description, and a button that will delete the document. The documents are listed in reverse order based on their primary key.
+
+The functionality of the app should allow a user to:
+1. Upload an individual document. *Note, For this app, the name and description are *required* along with the document.
+2. List previously uploaded documents. 
+3. Ability to delete a document.
+4. Search the documents based on the document's name as well as the type. 
+
