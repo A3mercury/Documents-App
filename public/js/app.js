@@ -36420,16 +36420,12 @@ var ReactApp = function (_Component) {
                 var visible = true;
 
                 if (this.state.typeSearch !== '' && this.state.searchText !== '') {
-                    console.log('0');
                     visible = doc.type === this.state.typeSearch && doc.name.search(this.state.searchText) >= 0;
                 } else if (this.state.typeSearch !== '' && this.state.searchText === '') {
-                    console.log('1');
                     visible = doc.type === this.state.typeSearch;
                 } else if (this.state.searchText !== '' && this.state.typeSearch === '') {
-                    console.log('2');
                     visible = doc.name.search(this.state.searchText) >= 0;
                 } else {
-                    console.log('3');
                     visible = true;
                 }
 
@@ -36497,17 +36493,19 @@ var ReactApp = function (_Component) {
     }, {
         key: 'getImageType',
         value: function getImageType(document) {
-            if (document.type == 'pdf') {
+            var imageTypes = ['jpeg', 'png', 'gif'];
+
+            if (imageTypes.indexOf(document.type) >= 0) {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'a',
                     { href: document.image },
-                    'View PDF'
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: document.image, width: '100' })
                 );
             } else {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'a',
                     { href: document.image },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: document.image, width: '100' })
+                    'View Document'
                 );
             }
         }
