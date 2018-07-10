@@ -13,7 +13,7 @@ class DocumentsApiController extends Controller
     public function index()
     {        
         return response()->json([
-            'documents' => DocumentResource::collection(Document::get()),
+            'documents' => DocumentResource::collection(Document::orderBy('id', 'desc')->get()),
         ]);
     }
 
