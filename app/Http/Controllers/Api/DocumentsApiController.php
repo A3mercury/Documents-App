@@ -21,7 +21,7 @@ class DocumentsApiController extends Controller
     {
         $this->validate(request(), [
             'name' => 'required|string|max:48',
-            'description' => 'nullable|string|max:255',
+            'description' => 'required|string|max:255',
             'file_data' => 'required|max:20000',
         ]);
 
