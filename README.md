@@ -15,7 +15,7 @@ valet link docs-app
 
 Now that we have a valet link, we need to setup our `.env` file. You can either create the file manually, or use the terminal command:
 ```
-touch .env`
+touch .env
 ```
 in the app directory to create a `.env` file. Inside the `.env` file, we want to add these variables:
 ```
