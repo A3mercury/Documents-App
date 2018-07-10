@@ -14,8 +14,9 @@ class DocumentResource extends Resource
             'name' => $this->name,
             'description' => $this->description,
             'created' => $this->created_at->toDayDateTimeString(),
-            'image_type' => $this->file_type,
+            'type' => explode('/', $this->file_type)[1],
             'image' => Storage::url($this->file_path . '/' . $this->file_name),
+            'isVisible' => true,
         ];
     }
 }
