@@ -36356,6 +36356,9 @@ var ReactApp = function (_Component) {
 
         _this.state = {
             documents: [],
+            documentTypes: [],
+            searchText: '',
+            typeSearch: '',
             name: '',
             description: '',
             data: ''
@@ -36363,6 +36366,8 @@ var ReactApp = function (_Component) {
         _this.handleChange = _this.handleChange.bind(_this);
         _this.handleSubmit = _this.handleSubmit.bind(_this);
         _this.deleteDocument = _this.deleteDocument.bind(_this);
+        _this.handleNameSearch = _this.handleNameSearch.bind(_this);
+        _this.handleTypeSearch = _this.handleTypeSearch.bind(_this);
         _this.state.data = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createRef();
         return _this;
     }
@@ -36380,6 +36385,59 @@ var ReactApp = function (_Component) {
                 state[key] = e.target.value;
                 this.setState(state);
             }.bind(this);
+        }
+    }, {
+        key: 'handleNameSearch',
+        value: function handleNameSearch(event) {
+            var state = {};
+            state['searchText'] = '';
+            return function (e) {
+                var searchText = e.target.value;
+                state['searchText'] = searchText;
+                this.setState(state, function (s) {
+                    this.search();
+                });
+            }.bind(this);
+        }
+    }, {
+        key: 'handleTypeSearch',
+        value: function handleTypeSearch(event) {
+            console.log('changed: ' + event.target.value);
+            var state = {};
+            state['typeSearch'] = event.target.value;
+            this.setState(state, function (s) {
+                this.search();
+            });
+        }
+    }, {
+        key: 'search',
+        value: function search() {
+            console.log(this.state);
+            var state = {};
+            var docs = this.state.documents;
+
+            docs.map(function (doc) {
+                var visible = true;
+
+                if (this.state.typeSearch !== '' && this.state.searchText !== '') {
+                    console.log('0');
+                    visible = doc.type === this.state.typeSearch && doc.name.search(this.state.searchText) >= 0;
+                } else if (this.state.typeSearch !== '' && this.state.searchText === '') {
+                    console.log('1');
+                    visible = doc.type === this.state.typeSearch;
+                } else if (this.state.searchText !== '' && this.state.typeSearch === '') {
+                    console.log('2');
+                    visible = doc.name.search(this.state.searchText) >= 0;
+                } else {
+                    console.log('3');
+                    visible = true;
+                }
+
+                doc.isVisible = visible;
+                return doc;
+            }, this);
+
+            this.setState(state);
         }
     }, {
         key: 'handleSubmit',
@@ -36422,15 +36480,24 @@ var ReactApp = function (_Component) {
             fetch('/api/documents').then(function (response) {
                 return response.json();
             }).then(function (response) {
-                _this4.setState({ documents: response.documents });
+                var state = {};
+                state['documents'] = response.documents;
+                state['documentTypes'] = response.documents.map(function (doc) {
+                    return doc.type;
+                }).filter(function (value, index, self) {
+                    return self.indexOf(value) === index;
+                });
+                _this4.setState(state);
             }).catch(function (err) {
                 console.log(err);
+            }).then(function () {
+                _this4.search();
             });
         }
     }, {
         key: 'getImageType',
         value: function getImageType(document) {
-            if (document.image_type == 'application/pdf') {
+            if (document.type == 'pdf') {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'a',
                     { href: document.image },
@@ -36451,7 +36518,7 @@ var ReactApp = function (_Component) {
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                { className: 'container' },
+                { className: 'container-fluid' },
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
                     { className: 'row', style: { marginTop: "20px" } },
@@ -36459,8 +36526,162 @@ var ReactApp = function (_Component) {
                         'div',
                         { className: 'col-md-12' },
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'h1',
+                            null,
+                            'Document Uploader App'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'span',
+                            { className: 'text-muted text-small' },
+                            'by: Austin Andrews'
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'row', style: { marginTop: "20px" } },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'col-md-8' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'form-group' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'label',
+                                null,
+                                'Search by Name'
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text',
+                                name: 'search_name',
+                                className: 'form-control',
+                                placeholder: 'Search...',
+                                value: this.state.searchText,
+                                onChange: this.handleNameSearch('search') })
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'form-group' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'label',
+                                null,
+                                'Search by Type'
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'select',
+                                { name: 'search_type',
+                                    className: 'form-control',
+                                    value: this.state.typeSearch,
+                                    onChange: this.handleTypeSearch },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'option',
+                                    { value: '' },
+                                    '-----'
+                                ),
+                                this.state.documentTypes.map(function (type) {
+                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'option',
+                                        { key: type, value: type },
+                                        type
+                                    );
+                                })
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'table',
+                            { className: 'table table-default table-striped table-bordered' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'thead',
+                                null,
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'tr',
+                                    null,
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'th',
+                                        null,
+                                        'Preview'
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'th',
+                                        null,
+                                        'Document Name'
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'th',
+                                        null,
+                                        'Type'
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'th',
+                                        { className: 'text-right', width: '200' },
+                                        'Upload Date'
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'th',
+                                        null,
+                                        'Description'
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('th', { width: '20' })
+                                )
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'tbody',
+                                null,
+                                this.state.documents.map(function (document) {
+                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'tr',
+                                        { key: document.id, style: !document.isVisible ? { display: "none" } : {} },
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'td',
+                                            null,
+                                            _this5.getImageType(document)
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'td',
+                                            null,
+                                            document.name
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'td',
+                                            { className: 'text-center' },
+                                            document.type
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'td',
+                                            { className: 'text-right' },
+                                            document.created
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'td',
+                                            null,
+                                            document.description
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'td',
+                                            { className: 'text-right' },
+                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                                'button',
+                                                { className: 'btn btn-sm btn-danger', onClick: function onClick() {
+                                                        _this5.deleteDocument(document);
+                                                    } },
+                                                'Delete'
+                                            )
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'col-md-4' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                             'div',
                             { className: 'card' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                { className: 'card-header' },
+                                'Upload a new Document'
+                            ),
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'div',
                                 { className: 'card-body' },
@@ -36508,98 +36729,6 @@ var ReactApp = function (_Component) {
                                         )
                                     )
                                 )
-                            )
-                        )
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'row', style: { marginTop: "20px" } },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'col-md-12' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'table',
-                            { className: 'table table-default table-striped table-bordered' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'thead',
-                                null,
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'tr',
-                                    null,
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'th',
-                                        null,
-                                        'Id'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'th',
-                                        null,
-                                        'Preview'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'th',
-                                        null,
-                                        'Document Name'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'th',
-                                        { className: 'text-right', width: '200' },
-                                        'Upload Date'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'th',
-                                        null,
-                                        'Description'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('th', { width: '20' })
-                                )
-                            ),
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'tbody',
-                                null,
-                                this.state.documents.map(function (document) {
-                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'tr',
-                                        { key: document.id },
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'td',
-                                            null,
-                                            document.id
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'td',
-                                            null,
-                                            _this5.getImageType(document)
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'td',
-                                            null,
-                                            document.name
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'td',
-                                            { className: 'text-right' },
-                                            document.created
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'td',
-                                            null,
-                                            document.description
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'td',
-                                            { className: 'text-right' },
-                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                'button',
-                                                { className: 'btn btn-sm btn-danger', onClick: function onClick() {
-                                                        _this5.deleteDocument(document);
-                                                    } },
-                                                'Delete'
-                                            )
-                                        )
-                                    );
-                                })
                             )
                         )
                     )
